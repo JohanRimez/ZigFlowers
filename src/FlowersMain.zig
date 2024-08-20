@@ -44,12 +44,12 @@ var flowerCanvas: *sdl.SDL_Surface = undefined;
 var renderer: *sdl.SDL_Renderer = undefined;
 
 const Flower = struct {
-    radius: f32,
-    modulation: f32,
-    rotation: f32,
-    speed: f32,
-    v: f32,
-    flag: bool,
+    radius: f32, // median radius of the flower
+    modulation: f32, // modulation amplitude of the flower
+    rotation: f32, // rotation (phase) of the flower
+    speed: f32, // actual rotation speed [rad/frame]
+    refspeed: f32, // reference (absolute value) for the rotation speed
+    flag: bool, // flag for even/odd indexed flowers
     pub fn init(index: usize, radius: f32, modulation: f32, speed: f32) Flower {
         return .{
             .radius = radius,
@@ -94,6 +94,8 @@ const Flower = struct {
         self.rotation += self.speed;
     }
     pub fn mode(self: *Flower, m: u8) void {
+        // positive speed: CW
+        // negative speed: CCW
         switch (m) {
             0 => self.speed = self.v,
             1 => self.speed = -self.v,
@@ -171,7 +173,7 @@ pub fn main() !void {
 
     // Flowers
     var flowers: [nFlowers]Flower = undefined;
-    for (&flowers,0..) |*flower, index| {
+    for (&flowers, 0..) |*flower, index| {
         const i: f32 = @floatFromInt(index);
         flower.* = Flower.init(index, 480.0 - 20.0 * i, 30.0, 0.002 * (1.0 + i));
     }
