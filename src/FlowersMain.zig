@@ -56,7 +56,7 @@ const Flower = struct {
             .modulation = modulation,
             .rotation = 0.0,
             .speed = speed,
-            .v = speed,
+            .refspeed = speed,
             .flag = (index % 2 == 0),
         };
     }
@@ -97,10 +97,10 @@ const Flower = struct {
         // positive speed: CW
         // negative speed: CCW
         switch (m) {
-            0 => self.speed = self.v,
-            1 => self.speed = -self.v,
-            2 => self.speed = if (self.flag) self.v else -self.v,
-            3 => self.speed = if (self.flag) -self.v else self.v,
+            0 => self.speed = self.refspeed,
+            1 => self.speed = -self.refspeed,
+            2 => self.speed = if (self.flag) self.refspeed else -self.refspeed,
+            3 => self.speed = if (self.flag) -self.refspeed else self.refspeed,
             else => unreachable,
         }
         if (m == 0 or m == 2) self.rotation = 0.0;
