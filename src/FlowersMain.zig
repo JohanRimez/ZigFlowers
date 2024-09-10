@@ -1,5 +1,14 @@
+// Sinde note: to compile this directly in linux
+// zig build-exe FlowersMain.zig -lc -target x86_64-linux-gnu -I/usr/include/ -I/usr/include/x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu -lSDL2
+// For fast running: add "-O ReleaseFast"
+
 const std = @import("std");
+
+// Comment/uncomment the relevant definition
+// Windows compilation
 const sdl = @cImport(@cInclude("C:\\Users\\Public\\Includes\\SDL2\\include\\SDL.h"));
+// Linux compilation
+//const sdl = @cImport(@cInclude("SDL2/SDL.h"));
 
 // Main parameters
 const nFlowers = 22;
@@ -109,20 +118,27 @@ const Flower = struct {
 
 pub fn main() !void {
     // initialise SDL
-    if (sdl.SDL_Init(sdl.SDL_INIT_TIMER) != 0) {
+    if (sdl.SDL_Init(sdl.SDL_INIT_TIMER | sdl.SDL_INIT_VIDEO) != 0) {
         std.debug.print("SDL initialisation error: {s}\n", .{sdl.SDL_GetError()});
         return error.sdl_initialisationerror;
     }
     defer sdl.SDL_Quit();
+
+    // Circumvent the FULLSCREEN BUG in LINUX
+    var dm: sdl.SDL_DisplayMode = undefined;
+    if (sdl.SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+        std.debug.print("SDL initialisation error: {s}\n", .{sdl.SDL_GetError()});
+        return error.sdl;
+    }
 
     // initialise rendering window
     const window: *sdl.SDL_Window = sdl.SDL_CreateWindow(
         "Game window",
         0,
         0,
-        1600,
-        900,
-        sdl.SDL_WINDOW_FULLSCREEN_DESKTOP,
+        dm.w,
+        dm.h,
+        sdl.SDL_WINDOW_BORDERLESS | sdl.SDL_WINDOW_MAXIMIZED,
     ) orelse {
         std.debug.print("SDL window creation failed: {s}\n", .{sdl.SDL_GetError()});
         return error.sdl_windowcreationfailed;
