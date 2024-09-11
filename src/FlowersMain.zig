@@ -115,21 +115,14 @@ pub fn main() !void {
     }
     defer sdl.SDL_Quit();
 
-    // Circumvent the FULLSCREEN BUG in LINUX
-    var dm: sdl.SDL_DisplayMode = undefined;
-    if (sdl.SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-        std.debug.print("SDL initialisation error: {s}\n", .{sdl.SDL_GetError()});
-        return error.sdl;
-    }
-
     // initialise rendering window
     const window: *sdl.SDL_Window = sdl.SDL_CreateWindow(
         "Game window",
         0,
         0,
-        dm.w,
-        dm.h,
-        sdl.SDL_WINDOW_BORDERLESS | sdl.SDL_WINDOW_MAXIMIZED,
+        800,
+        600,
+        sdl.SDL_WINDOW_FULLSCREEN_DESKTOP,
     ) orelse {
         std.debug.print("SDL window creation failed: {s}\n", .{sdl.SDL_GetError()});
         return error.sdl_windowcreationfailed;

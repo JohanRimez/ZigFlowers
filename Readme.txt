@@ -24,7 +24,7 @@ USAGE:
 CODING:
 
 In order for VS Code/Codium to run smoothly with the Zig Language Server (ZLS) in both Windows and Linux, the C-library and the SDL-library header files
-are first exported to a common import file "SDLimport.zig" (UTF-8) as a preparatory step (you may want to locate the header files first and 
+are first exported to a common import file "SDLimport.zig" (important: UTF-8) as a preparatory step (you may want to locate the header files first and 
 adapt the below commands first). I consider this file to be put in the source directory.
 
 target specific:
@@ -35,12 +35,16 @@ COMPILING:
 
 The build.zig build file is configured for these scenarios:
 * Building in windows for windows
-* Building in windows for linux (libraries libSDL2.a & libSDL2.so need to be provided in the root project directory)
+* Building in windows for linux (.a & .so libraries need to be provided in the root project directory)
 * Building in linux for linux
 
 VS CODE:
 
 the json-build and launch tasks are configured for windows.
+
+RUNNING:
+
+Windows users need to put the path to the SDL2.dll SDL2_image.dll libraries into their PATH or have them in the same folder as the executable.
 
 REMARK:
 
