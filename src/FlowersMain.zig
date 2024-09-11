@@ -1,14 +1,5 @@
-// Sinde note: to compile this directly in linux
-// zig build-exe FlowersMain.zig -lc -target x86_64-linux-gnu -I/usr/include/ -I/usr/include/x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu -lSDL2
-// For fast running: add "-O ReleaseFast"
-
 const std = @import("std");
-
-// Comment/uncomment the relevant definition
-// Windows compilation
-const sdl = @cImport(@cInclude("C:\\Users\\Public\\Includes\\SDL2\\include\\SDL.h"));
-// Linux compilation
-//const sdl = @cImport(@cInclude("SDL2/SDL.h"));
+const sdl = @import("SDLimport.zig");
 
 // Main parameters
 const nFlowers = 22;

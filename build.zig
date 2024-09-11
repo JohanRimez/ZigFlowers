@@ -4,12 +4,9 @@
 const programName = "ZigFlowers";
 const mainEntry = "FlowersMain.zig";
 
-// To compile for windows: -Dtarget=x86_64-windows
-// To compile for linux: -Dtarget=x86_64-linux-gnu
-// To compile fast: -Doptimize=ReleaseFast
-// To compile for linux on a (my) windows machine: add libSD2.a & libSDL2.so to the project root
+// To compile for linux on a windows machine: add libSD2.a & libSDL2.so to the project root
 
-// Up till the moment the "Linux Native Build bug" is fixed, compilation in Linux requires
+// Up till the moment the "Linux Native Build bug" (https://github.com/ziglang/zig/issues/21376) is fixed, compilation in Linux requires
 // the explicit target parameter
 
 const std = @import("std");
@@ -23,9 +20,6 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-
-    std.debug.print("Host machine OS: {}\n", .{b.host.result.os.tag});
-    std.debug.print("Target machine OS: {}\n", .{target.result.os.tag});
 
     exe.addIncludePath(.{ .cwd_relative = "src/" });
     switch (target.result.os.tag) {
