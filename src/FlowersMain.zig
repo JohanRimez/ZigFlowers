@@ -1,5 +1,5 @@
 const std = @import("std");
-const sdl = @import("SDLimport.zig");
+const sdl = @import("cImport.zig");
 
 // Main parameters
 const nFlowers = 22;
@@ -115,17 +115,22 @@ pub fn main() !void {
     }
     defer sdl.SDL_Quit();
 
-    // initialise rendering window
+    // Prepare full screen (stable alternative for linux)
+    var dm: sdl.SDL_DisplayMode = undefined;
+    if (sdl.SDL_GetDisplayMode(0, 0, &dm) != 0) {
+        std.debug.print("SDL GetDisplayMode error: {s}\n", .{sdl.SDL_GetError()});
+        return error.sdl_initialisationerror;
+    }
     const window: *sdl.SDL_Window = sdl.SDL_CreateWindow(
         "Game window",
         0,
         0,
-        800,
-        600,
-        sdl.SDL_WINDOW_FULLSCREEN_DESKTOP,
+        dm.w,
+        dm.h,
+        sdl.SDL_WINDOW_BORDERLESS | sdl.SDL_WINDOW_MAXIMIZED,
     ) orelse {
         std.debug.print("SDL window creation failed: {s}\n", .{sdl.SDL_GetError()});
-        return error.sdl_windowcreationfailed;
+        return error.sdl_initialisationerror;
     };
     defer sdl.SDL_DestroyWindow(window);
 
@@ -176,6 +181,12 @@ pub fn main() !void {
     for (&flowers, 0..) |*flower, index| {
         const i: f32 = @floatFromInt(index);
         flower.* = Flower.init(index, 480.0 - 20.0 * i, 30.0, 0.002 * (1.0 + i));
+    }
+
+    // Tweak background openGL to avoid screen flickering
+    if (sdl.SDL_GL_GetCurrentContext() != null) {
+        _ = sdl.SDL_GL_SetSwapInterval(1);
+        std.debug.print("Adapted current openGL context for vSync\n", .{});
     }
 
     // Hide mouse
